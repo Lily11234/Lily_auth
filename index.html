@@ -82,17 +82,19 @@
     <div class="verify-panel">
       <p>请输入档案页右下角的防伪校验码以验证真实性：</p>
       <form id="verifyForm">
-        <input type="text" id="codeInput" placeholder="请输入防伪码" required />
-        <div
-          class="cf-turnstile"
-          data-sitekey="0x4AAAAAAA8msMU3LQdN-tcy"
+      <input type="text" id="codeInput" placeholder="请输入档案防伪码" required />
+      
+      <div class="cf-turnstile"
+          data-sitekey="0x4AAAAAAB8msMU3LQhN-tcy"
           data-theme="light"
           data-size="normal"
-          style="margin: 20px auto;"
-        ></div>
+          style="margin: 20px auto;">
+      </div>
+      
+      <button type="submit">验证</button>
+    </form>
 
-        <button type="submit">验证</button>
-      </form>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
       <div id="result"></div>
     </div>
