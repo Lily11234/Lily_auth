@@ -43,6 +43,7 @@ export async function onRequestGet({ request, env }) {
     });
   }
 
+  
   const html = `
   <!DOCTYPE html>
   <html lang="zh-CN">
@@ -123,4 +124,25 @@ export async function onRequestGet({ request, env }) {
   return new Response(html, {
     headers: { "Content-Type": "text/html; charset=utf-8" },
   });
+}
+
+
+export async function onRequestPost({ request }) {
+  const formData = await request.formData();
+  const token = formData.get('cf-turnstile-response');
+
+  const secret = "0x4AAAAAAB8msMU3LQdN-tcy";
+  const verifyUrl = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+
+  const response = await fetch(verifyUrl, {
+    method: "POST",
+    body: new URLSearchParams({ secret, response: token }),
+  });
+
+  const outcome = await response.json();
+  if (outcome.success) {
+    return new Response("验证成功", { status: 200 });
+  } else {
+    return new Response("验证失败", { status: 403 });
+  }
 }

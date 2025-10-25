@@ -3,21 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>档案验证系统 | 文件真实性查询</title>
+  <title>档案防伪验证系统</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="page-frame">
     <div class="header">
-      <h1>档案验证系统</h1>
+      <h1>档案真实性验证系统</h1>
       <p class="subtitle">Document Authentication System</p>
       <div class="divider"></div>
     </div>
 
     <div class="verify-panel">
-      <p class="desc">请输入文件防伪码进行真实性验证：</p>
+      <p class="desc">请输入档案页右下角的防伪校验码以验证真实性：</p>
       <form id="verifyForm">
-        <input type="text" id="codeInput" placeholder="请输入防伪码（例：A5360EC39395）" required>
+        <input type="text" id="codeInput" placeholder="请输入防伪码" required autofocus>
+        <div class="cf-turnstile"
+             data-sitekey="0x4AAAAAAA8msMU3LQdN-tcy"
+             data-theme="light"
+             data-size="normal"></div>
         <button type="submit">验证</button>
       </form>
       <div id="result"></div>
@@ -25,17 +29,25 @@
 
     <div class="footer">
       <div class="divider"></div>
-      <p>档案编号系统 · 版权所有 © 2025</p>
+      <p>档案真实性系统 · 版权所有 © 2025</p>
     </div>
   </div>
 
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <script>
-    document.getElementById("verifyForm").addEventListener("submit", e => {
-      e.preventDefault();
-      const code = document.getElementById("codeInput").value.trim();
-      if (!code) return;
-      window.location.href = `/verify?code=${encodeURIComponent(code)}`;
-    });
+  document.getElementById("verifyForm").addEventListener("submit", e => {
+    e.preventDefault();
+
+    const code = document.getElementById("codeInput").value.trim();
+    const token = document.querySelector('textarea[name="cf-turnstile-response"]')?.value;
+
+    if (!code || !token) {
+      alert("请完成验证码验证");
+      return;
+    }
+
+    window.location.href = `/verify?code=${encodeURIComponent(code)}&token=${encodeURIComponent(token)}`;
+  });
   </script>
 </body>
 </html>
