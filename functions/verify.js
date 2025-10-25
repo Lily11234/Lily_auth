@@ -1,88 +1,127 @@
-import { sha256 } from 'js-sha256';
+export async function onRequestGet({ request, env }) {
+  const url = new URL(request.url);
+  const code = url.searchParams.get("code");
+  const now = new Date();
+  const timeStr = now.toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" });
 
-export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
-    const code = url.searchParams.get("code");
+  let isValid = false;
+  let reason = "未提供检验码。";
+  let data = null;
 
-    if (!code) {
-      return new Response(await errorPage("未提供防伪码", "请返回主页输入后再试。"), {
-        headers: { "Content-Type": "text/html; charset=utf-8" },
-      });
-    }
+  if (code) {
+    let exists = await env.AUTH_DB.get(code);
+    if (!exists) exists = await env.AUTH_DB.get(code.toLowerCase());
+    if (!exists) exists = await env.AUTH_DB.get(code.toUpperCase());
 
-    const recordJSON = await env.AUTH_DB.get(code);
-    if (!recordJSON) {
-      return new Response(await errorPage("未找到该编号", "请检查输入是否正确。"), {
-        headers: { "Content-Type": "text/html; charset=utf-8" },
-      });
-    }
-
-    const record = JSON.parse(recordJSON);
-    const secret = env.AUTH_SECRET || "LILY-2025-KEY";
-    const expected = sha256(record.filename + record.batch + secret);
-
-    if (record.hash && record.hash === expected) {
-      return new Response(await successPage(record), {
-        headers: { "Content-Type": "text/html; charset=utf-8" },
-      });
+    if (exists) {
+      try {
+        data = JSON.parse(exists);
+        isValid = true;
+        reason = `验证通过：${data.filename}（${data.batch}）`;
+      } catch {
+        reason = "KV 数据格式错误，无法解析。";
+      }
     } else {
-      return new Response(await errorPage("签名校验失败", "此数据可能已被篡改。"), {
-        headers: { "Content-Type": "text/html; charset=utf-8" },
-      });
+      reason = "未检索到此哈希值。";
     }
-  },
-};
+  }
 
-async function successPage(record) {
-  return `
-  <html lang="zh">
+  const jsonData = {
+    code: code || null,
+    valid: isValid,
+    result: reason,
+    filename: data?.filename || null,
+    batch: data?.batch || null,
+    timestamp: timeStr,
+    server: "Cloudflare Pages Functions · Lily-auth v2",
+  };
+
+  const accept = request.headers.get("accept") || "";
+  if (accept.includes("application/json")) {
+    return new Response(JSON.stringify(jsonData, null, 2), {
+      headers: { "Content-Type": "application/json; charset=utf-8" },
+    });
+  }
+
+  const html = `
+  <!DOCTYPE html>
+  <html lang="zh-CN">
   <head>
-    <meta charset="utf-8">
-    <title>验证成功 | 档案验证系统</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>哈希验证结果 · Lily-auth</title>
     <style>
-      body { font-family: "宋体", "PingFang SC", sans-serif; background:#f6f8f6; text-align:center; padding:60px; }
-      .card { background:white; border:1px solid #bbb; display:inline-block; padding:30px 60px; box-shadow:0 3px 10px rgba(0,0,0,0.08); }
-      h1 { color:#006633; font-size:22px; margin-bottom:20px; }
-      table { margin:auto; text-align:left; border-collapse:collapse; font-size:15px; }
-      td { padding:6px 12px; border-bottom:1px solid #ddd; }
-      .footer { margin-top:25px; color:#666; font-size:13px; }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background: #f7f8fa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+      .card {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+        padding: 36px 48px;
+        max-width: 540px;
+        text-align: center;
+        line-height: 1.7;
+      }
+      .emoji {
+        font-size: 2.8rem;
+        margin-bottom: 12px;
+      }
+      h1 {
+        color: ${isValid ? "#0f9d58" : "#d93025"};
+        font-size: 1.8rem;
+        margin-bottom: 22px;
+      }
+      p {
+        font-size: 15px;
+        color: #333;
+        margin: 8px 0;
+      }
+      code {
+        background: #f2f3f5;
+        padding: 3px 6px;
+        border-radius: 5px;
+        font-size: 0.95em;
+        color: #555;
+      }
+      footer {
+        margin-top: 28px;
+        font-size: 13px;
+        color: #777;
+      }
+      footer a {
+        color: #0069c2;
+        text-decoration: none;
+      }
+      footer a:hover {
+        text-decoration: underline;
+      }
     </style>
   </head>
   <body>
     <div class="card">
-      <h1>✅ 文件验证通过</h1>
-      <table>
-        <tr><td><b>文件名：</b></td><td>${record.filename}</td></tr>
-        <tr><td><b>批次号：</b></td><td>${record.batch}</td></tr>
-        <tr><td><b>状态：</b></td><td>系统签名验证通过</td></tr>
-      </table>
-      <div class="footer">档案验证系统 · Cloudflare Workers</div>
+      <div class="emoji">${isValid ? "✅" : "❌"}</div>
+      <h1>${isValid ? "验证通过" : "验证失败"}</h1>
+      <p><b>校验码：</b><code>${code || "(空)"}</code></p>
+      <p><b>结果说明：</b>${reason}</p>
+      <p><b>校验时间：</b>${timeStr}</p>
+      ${data ? `<p><b>文件名：</b>${data.filename}</p><p><b>批次号：</b>${data.batch}</p>` : ""}
+      <footer>
+        <p>由 <b>Cloudflare Pages</b> 提供验证支持<br>
+        Lily-auth 系统 · <a href="https://auth.lishuyun.net">返回首页</a></p>
+      </footer>
     </div>
   </body>
-  </html>`;
-}
+  </html>
+  `;
 
-async function errorPage(title, message) {
-  return `
-  <html lang="zh">
-  <head>
-    <meta charset="utf-8">
-    <title>${title} | 档案验证系统</title>
-    <style>
-      body { font-family: "宋体", "PingFang SC", sans-serif; background:#f9f5f5; text-align:center; padding:60px; }
-      .card { background:white; border:1px solid #d93025; display:inline-block; padding:30px 60px; box-shadow:0 3px 10px rgba(0,0,0,0.08); }
-      h1 { color:#d93025; font-size:22px; margin-bottom:20px; }
-      .msg { color:#666; font-size:15px; }
-      .footer { margin-top:25px; color:#999; font-size:13px; }
-    </style>
-  </head>
-  <body>
-    <div class="card">
-      <h1>${title}</h1>
-      <div class="msg">${message}</div>
-      <div class="footer">档案验证系统 · Cloudflare Workers</div>
-    </div>
-  </body>
-  </html>`;
+  return new Response(html, {
+    headers: { "Content-Type": "text/html; charset=utf-8" },
+  });
 }

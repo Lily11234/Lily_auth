@@ -85,7 +85,7 @@ export async function onRequestGet({ request, env }) {
         : `<p>未找到与此批次号对应的记录。</p>`
     }
     <footer>
-      <p>Lily-auth 系统 · <a href="https://auth.lishunyun.net">返回首页</a></p>
+      <p>Lily-auth 系统 · <a href="https://auth.lishuyun.net">返回首页</a></p>
     </footer>
   </body>
   </html>
