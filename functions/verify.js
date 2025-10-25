@@ -114,7 +114,7 @@ export async function onRequestGet({ request, env }) {
       ${data ? `<p><b>文件名：</b>${data.filename}</p><p><b>批次号：</b>${data.batch}</p>` : ""}
       <footer>
         <p>由 <b>Cloudflare Pages</b> 提供验证支持<br>
-        Lily-auth 系统 · <a href="https://auth.lishuyun.net">返回首页</a></p>
+        Lily-auth 系统 · <a href="https://lily-auth.pages.dev">返回首页</a></p>
       </footer>
     </div>
   </body>
