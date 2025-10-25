@@ -1,34 +1,28 @@
-export async function onRequestPost({ request, env }) {
-  const formData = await request.formData();
-  const code = formData.get("code");
-  const token = formData.get("cf-turnstile-response");
+export async function onRequestPost(context) {
+  try {
+    const { request, env } = context;
+    const { token } = await request.json();
 
-  if (!code || !token) {
-    return new Response("缺少参数", { status: 400 });
+    const formData = new FormData();
+    formData.append("secret", env.TURNSTILE_SECRET);
+    formData.append("response", token);
+
+    const result = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      body: formData
+    });
+
+    const outcome = await result.json();
+
+    return new Response(JSON.stringify(outcome), {
+      headers: { "Content-Type": "application/json" }
+    });
+  } catch (err) {
+    return new Response(JSON.stringify({ success: false, error: err.message }), {
+      headers: { "Content-Type": "application/json" },
+      status: 500
+    });
   }
-
-  const verifyURL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-  const secret = env.TURNSTILE_SECRET;
-
-  const response = await fetch(verifyURL, {
-    method: "POST",
-    body: new URLSearchParams({
-      secret,
-      response: token,
-    }),
-  });
-
-  const outcome = await response.json();
-
-  if (!outcome.success) {
-    console.log("❌ Turnstile 验证失败：", outcome);
-    return new Response(
-      "Turnstile 验证失败，请返回重试。",
-      { status: 403, headers: { "Content-Type": "text/plain; charset=utf-8" } }
-    );
-  }
-
-  return Response.redirect(`/verify?code=${encodeURIComponent(code)}`, 302);
 }
 
 export async function onRequestGet({ request, env }) {
