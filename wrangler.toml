@@ -3,7 +3,7 @@ main = "functions/verify.js"
 compatibility_date = "2025-10-25"
 
 [vars]
-TURNSTILE_SECRET = "0x4AAAAAAB8msMU3LQdN-tcy"
+TURNSTILE_SECRET = "0x4AAAAAAB8msPS5UKwUMVZh4DazG3dpsgE"
 
 [kv_namespaces]
 binding = "AUTH_DB"
