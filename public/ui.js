@@ -3,38 +3,39 @@ document.getElementById("verify-btn").addEventListener("click", async () => {
   const resultBox = document.getElementById("verify-result");
 
   if (!key) {
-    resultBox.innerHTML = "⚠️ 请输入编号。";
+    resultBox.innerHTML = "⚠️ 请输入哈希码。";
     return;
   }
 
-  resultBox.innerHTML = "⏳ 正在验证，请稍候...";
+  // 使用绑定服务，Pages 会自动转发到 lily_auth Worker
+  const apiBase = "/api";
 
   try {
-    const apiBase = "/api";;
-    const res = await fetch(`${apiBase}/api/verify?key=${encodeURIComponent(key)}`);  
+    resultBox.innerHTML = "⌛ 正在验证，请稍候...";
+    const res = await fetch(`${apiBase}/verify?key=${encodeURIComponent(key)}`);
     const data = await res.json();
 
     if (data.success) {
-    resultBox.innerHTML = `
-      <p>${data.message}</p>
-      <p>📄 描述：${data.desc || "无说明"}</p>
-      <p>📦 批次：${data.batch || "无记录"}</p>
-      ${
-        data.image
-          ? `<img src="${data.image}" alt="签章样本" style="max-width:180px;margin:10px;border-radius:6px;" />`
-          : ""
-      }
-      ${
-        data.qrcode
-          ? `<img src="${data.qrcode}" alt="二维码" style="max-width:120px;margin-top:10px;border:1px dashed #aaa;padding:4px;border-radius:6px;" />`
-          : ""
-      }
-      <p style="font-size:13px;color:gray;">🕓 更新时间：${data.created_at || "未知"}</p>
-    `;
-  } else {
+      resultBox.innerHTML = `
+        ✅ ${data.message}<br>
+        <p>描述：${data.desc || "—"}</p>
+        <p>批次号：${data.batch || "—"}</p>
+        ${
+          data.image
+            ? `<img src="${data.image}" alt="签章样本" style="max-width:200px;margin-top:10px;border-radius:6px;" />`
+            : ""
+        }
+        ${
+          data.qrcode
+            ? `<img src="${data.qrcode}" alt="二维码" style="max-width:120px;margin-top:10px;border:1px dashed #444;padding:4px;" />`
+            : ""
+        }
+        <p style="font-size:13px;color:#888;">更新时间：${data.created_at || "未知"}</p>
+      `;
+    } else {
       resultBox.innerHTML = `❌ ${data.message}`;
     }
   } catch (err) {
-    resultBox.innerHTML = `💥 网络错误：${err.message}`;
+    resultBox.innerHTML = `⚠️ 网络错误：${err.message}`;
   }
 });
