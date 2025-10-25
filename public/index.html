@@ -1,126 +1,60 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>签章验证系统 · LILY_AUTH</title>
-  <link rel="icon" href="./images/signature_blue.png" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lily 档案签章验证系统 · LILY_AUTH</title>
+  <link rel="icon" href="/images/signature_blue.png" type="image/png">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/src/verify.js">
+
   <style>
     body {
-      font-family: "Microsoft YaHei", sans-serif;
-      background: linear-gradient(180deg, #f0f4fa 0%, #e6edf5 100%);
+      background-color: #0d0d0d;
+      color: #e6f6f4;
+      font-family: "Helvetica Neue", sans-serif;
+      text-align: center;
       margin: 0;
       padding: 0;
-      color: #222;
     }
-
-    .header {
-      text-align: center;
-      background: #1E88E5;
-      color: white;
-      padding: 20px 0;
-      letter-spacing: 1px;
-    }
-
-    .verify-box {
-      max-width: 600px;
-      margin: 50px auto;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      padding: 40px;
-      text-align: center;
-      position: relative;
-    }
-
-    h2 {
-      color: #1E88E5;
-      margin-bottom: 20px;
-    }
-
+    .header { margin-top: 4vh; }
     input {
-      width: 70%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      outline: none;
+      width: 260px; padding: 10px;
+      border-radius: 6px; border: 1px solid #00ffff;
+      background: #111; color: #fff;
     }
-
     button {
+      margin-left: 8px;
       padding: 10px 20px;
-      margin-left: 10px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #1E88E5;
-      color: white;
-      transition: 0.3s;
+      border: none; border-radius: 6px;
+      background: #00d9d9; color: #000;
+      cursor: pointer; font-weight: bold;
     }
-
-    button:hover {
-      background: #1565C0;
-    }
-
-    .result-box {
-      margin-top: 25px;
-      padding: 15px;
-      background: #f9f9f9;
-      border-radius: 8px;
-      text-align: left;
-      font-size: 15px;
-      line-height: 1.6;
-    }
-
-    .result-box img {
-      display: block;
-      margin: 10px auto;
-      max-width: 180px;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-    }
-
-    .qrcode-placeholder {
-      position: absolute;
-      bottom: 10px;
-      right: 15px;
-      width: 90px;
-      height: 90px;
-      border: 1px dashed #bbb;
-      border-radius: 6px;
-      font-size: 12px;
-      color: #888;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
+    button:hover { background: #00ffff; }
+    .verify-box { margin-top: 5vh; }
+    #verify-result { margin-top: 3vh; font-size: 15px; min-height: 60px; }
     footer {
-      text-align: center;
-      font-size: 12px;
-      color: #888;
-      margin-bottom: 20px;
+      margin-top: 8vh;
+      font-size: 13px;
+      color: #666;
     }
   </style>
 </head>
 
 <body>
   <div class="header">
-    <h1>签章验证系统</h1>
-    <p>LILY_AUTH Verification · 浙江高院档案版</p>
+    <h1>📜 Lily 档案签章验证系统</h1>
+    <p>输入哈希码以验证签章页真伪</p>
   </div>
 
   <div class="verify-box">
-    <h2>档案签章验证模块</h2>
-    <input id="verify-input" type="text" placeholder="请输入签章编号（如 074A14D8E153）" />
-    <button id="verify-btn">验证</button>
-    <div id="verify-result" class="result-box">🔍 请在上方输入编号以开始验证。</div>
-    <div class="qrcode-placeholder">二维码位置</div>
+    <input id="verify-input" type="text" placeholder="请输入哈希码 (如 074a14d8e153)" />
+    <button id="verify-btn">验证签章</button>
+    <div id="verify-result"> </div>
   </div>
 
-  <footer>© 2025 LILY_AUTH · 档案系统防伪验证模块</footer>
+  <footer>© 2025 LILY_AUTH · 档案系统验证模块</footer>
 
-  <script src="./ui.js"></script>
+  <script src="/ui.js"></script>
 </body>
 </html>
