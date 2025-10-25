@@ -109,7 +109,6 @@ export async function onRequestGet({ request, env }) {
       <div class="emoji">${isValid ? "✅" : "❌"}</div>
       <h1>${isValid ? "验证通过" : "验证失败"}</h1>
       <p><b>校验码：</b><code>${code || "(空)"}</code></p>
-      <p><b>结果说明：</b>${reason}</p>
       <p><b>校验时间：</b>${timeStr}</p>
       ${data ? `<p><b>文件名：</b>${data.filename}</p><p><b>批次号：</b>${data.batch}</p>` : ""}
       <footer>
