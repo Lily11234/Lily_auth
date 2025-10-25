@@ -1,0 +1,10 @@
+name = "lily-verify"
+main = "verify.js"
+compatibility_date = "2024-10-01"
+
+[[kv_namespaces]]
+binding = "AUTH_DB"
+id = "1a667999b70440fe9895a69acd13108a"
+
+[vars]
+AUTH_SECRET = "LILY-2025-KEY"

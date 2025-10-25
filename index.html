@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="zh-CN"><head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>档案验证系统 | 文件真实性查询</title>
@@ -15,7 +17,7 @@
     <div class="verify-panel">
       <p class="desc">请输入文件防伪码进行真实性验证：</p>
       <form id="verifyForm">
-        <input type="text" id="codeInput" placeholder="请输入防伪码（例：a5360ec39395）" required="">
+        <input type="text" id="codeInput" placeholder="请输入防伪码（例：5FCF4020A069）" required>
         <button type="submit">验证</button>
       </form>
       <div id="result"></div>
@@ -27,15 +29,13 @@
     </div>
   </div>
 
-<script>
-  document.getElementById("verifyForm").addEventListener("submit", e => {
-    e.preventDefault();
-    const code = document.getElementById("codeInput").value.trim();
-    if (!code) return;
-    const workerURL = "https://lily-auth.pages.dev/verify?code=";
-    window.location.href = workerURL + encodeURIComponent(code);
-  });
-</script>
-<!-- Cloudflare Pages Analytics --><script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{&quot;token&quot;: &quot;1fd1b08621824c57ab2ad7f29c25fef2&quot;}"></script><!-- Cloudflare Pages Analytics -->
-
-</body></html>
+  <script>
+    document.getElementById("verifyForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const code = document.getElementById("codeInput").value.trim();
+      if (!code) return;
+      window.location.href = `/verify?code=${encodeURIComponent(code)}`;
+    });
+  </script>
+</body>
+</html>
