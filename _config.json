@@ -1,3 +1,22 @@
 {
-  "functions": "./functions"
+  "A1B2C3D4": {
+    "desc": "档案 001 · 正本",
+    "hash": "ef3044eaa30e5", 
+    "correct": "红章",
+    "options": {
+      "红章": "/images/red_stamp.png",
+      "蓝章": "/images/blue_stamp.png",
+      "黑章": "/images/black_stamp.png"
+    }
+  },
+  "B8E9F1G2": {
+    "desc": "档案 002 · 审核件",
+    "hash": "7ac0a9a4f7b1",
+    "correct": "蓝章",
+    "options": {
+      "蓝章": "/images/blue_stamp.png",
+      "红章": "/images/red_stamp.png",
+      "黑章": "/images/black_stamp.png"
+    }
+  }
 }
