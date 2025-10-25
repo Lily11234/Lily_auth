@@ -7,7 +7,6 @@ document.getElementById("verify-btn").addEventListener("click", async () => {
     return;
   }
 
-  // 使用绑定服务，Pages 会自动转发到 lily_auth Worker
   const apiBase = "/api";
 
   try {
