@@ -1,10 +1,10 @@
 name = "lily-auth"
-main = "./functions/verify.js"
-compatibility_date = "2025-01-01"
+main = "functions/verify.js"
+compatibility_date = "2025-10-25"
 
-[site]
-bucket = "."
-pages_build_output_dir = "."
+[vars]
+TURNSTILE_SECRET = "0x4AAAAAAA8msPSSUkWUwMZh4DazG3dpsgE"
 
-[build]
-command = ""
+[kv_namespaces]
+binding = "AUTH_DB"
+id = "your_kv_namespace_id_here"
