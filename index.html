@@ -89,17 +89,24 @@
     </div>
 
     <form id="verifyForm">
-    <input type="text" id="codeInput" placeholder="请输入档案防伪码" required />
+    <input
+      type="text"
+      id="codeInput"
+      placeholder="请输入档案防伪码"
+      required
+    />
 
-    <div class="cf-turnstile"
-        data-sitekey="0x4AAAAAAB8msMU3LQdN-tcy"
-        data-theme="light"
-        data-size="normal"
-        data-callback="onTurnstileCompleted"
-        style="margin: 20px auto;"></div>
+    <div
+      class="cf-turnstile"
+      data-sitekey="0x4AAAAAAB8msMU3LQdN-tcy"
+      data-theme="light"
+      data-callback="onTurnstileCompleted"
+    ></div>
 
     <button type="submit">验证</button>
   </form>
+
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
   <script>
     function onTurnstileCompleted(token) {

@@ -1,3 +1,44 @@
+let turnstileValid = false;
+
+function onTurnstileCompleted(token) {
+  console.log("✅ Turnstile 验证成功:", token);
+  turnstileValid = true;
+  window.turnstileToken = token;
+}
+
+document.getElementById("verifyForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const code = document.getElementById("codeInput").value.trim();
+
+  if (!turnstileValid) {
+    alert("请先完成验证码验证");
+    return;
+  }
+
+  if (!code) {
+    alert("请输入档案防伪码");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        code,
+        token: window.turnstileToken,
+      }),
+    });
+
+    const data = await res.json();
+    alert(data.reason || "验证完成");
+  } catch (err) {
+    console.error("❌ 验证失败：", err);
+    alert("网络错误，请稍后再试");
+  }
+});
+
 export async function onRequestPost(context) {
   try {
     const { request, env } = context;
@@ -9,19 +50,23 @@ export async function onRequestPost(context) {
 
     const result = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
       method: "POST",
-      body: formData
+      body: formData,
     });
 
     const outcome = await result.json();
 
-    return new Response(JSON.stringify(outcome), {
-      headers: { "Content-Type": "application/json" }
-    });
+    return new Response(
+      JSON.stringify(outcome),
+      {
+        headers: { "Content-Type": "application/json" },
+        status: outcome.success ? 200 : 400,
+      }
+    );
   } catch (err) {
-    return new Response(JSON.stringify({ success: false, error: err.message }), {
-      headers: { "Content-Type": "application/json" },
-      status: 500
-    });
+    return new Response(
+      JSON.stringify({ success: false, error: err.message }),
+      { headers: { "Content-Type": "application/json" }, status: 500 }
+    );
   }
 }
 
