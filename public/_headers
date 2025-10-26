@@ -1,2 +1,5 @@
 /*
   TURNSTILE_SITE_KEY: 0x4AAAAAAB8msEdkjmlt0lYu2gQicmjkkOQ
+
+/*
+  Content-Security-Policy: script-src 'self' https://challenges.cloudflare.com
