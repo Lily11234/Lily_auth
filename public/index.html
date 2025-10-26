@@ -3,124 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>签章验证系统 · LILY_AUTH</title>
-  <link rel="icon" href="./images/signature_blue.png" />
-  <style>
-    body {
-      font-family: "Microsoft YaHei", sans-serif;
-      background: linear-gradient(180deg, #f0f4fa 0%, #e6edf5 100%);
-      margin: 0;
-      padding: 0;
-      color: #222;
-    }
-
-    .header {
-      text-align: center;
-      background: #1E88E5;
-      color: white;
-      padding: 20px 0;
-      letter-spacing: 1px;
-    }
-
-    .verify-box {
-      max-width: 600px;
-      margin: 50px auto;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      padding: 40px;
-      text-align: center;
-      position: relative;
-    }
-
-    h2 {
-      color: #1E88E5;
-      margin-bottom: 20px;
-    }
-
-    input {
-      width: 70%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      outline: none;
-    }
-
-    button {
-      padding: 10px 20px;
-      margin-left: 10px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #1E88E5;
-      color: white;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background: #1565C0;
-    }
-
-    .result-box {
-      margin-top: 25px;
-      padding: 15px;
-      background: #f9f9f9;
-      border-radius: 8px;
-      text-align: left;
-      font-size: 15px;
-      line-height: 1.6;
-    }
-
-    .result-box img {
-      display: block;
-      margin: 10px auto;
-      max-width: 180px;
-      border-radius: 6px;
-      border: 1px solid #ddd;
-    }
-
-    .qrcode-placeholder {
-      position: absolute;
-      bottom: 10px;
-      right: 15px;
-      width: 90px;
-      height: 90px;
-      border: 1px dashed #bbb;
-      border-radius: 6px;
-      font-size: 12px;
-      color: #888;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    footer {
-      text-align: center;
-      font-size: 12px;
-      color: #888;
-      margin-bottom: 20px;
-    }
-  </style>
+  <title>档案真实性验证系统 | Lily Auth</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="verify.js" defer></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
-
 <body>
-  <div class="header">
-    <h1>签章验证系统</h1>
-    <p>LILY_AUTH Verification · 浙江高院档案版</p>
+  <div class="main">
+    <div class="page-frame">
+      <h1 class="header">档案真实性验证系统</h1>
+      <p class="subtitle">Document Authentication System</p>
+      <form id="verifyForm">
+        <input type="text" id="codeInput" placeholder="请输入档案防伪码" required />
+      <div id="turnstile-container" class="fade-in">
+        <div
+          class="cf-turnstile"
+          data-sitekey="0x4AAAAAAB8msEdkjmlt0lYu2gQicmjkkOQ"
+          data-theme="light"
+          data-size="compact"
+          data-callback="onTurnstileCompleted"
+          data-language="zh">
+        </div>
+        <div id="success-checkmark" class="checkmark hidden">✔</div>
+      </div>
+        <button type="submit">验证</button>
+      </form>
+    </div>
   </div>
+  <script>
+    console.log("Turnstile script loaded:", typeof turnstile !== "undefined");
 
-  <div class="verify-box">
-    <h2>档案签章验证模块</h2>
-    <input id="verify-input" type="text" placeholder="请输入签章编号（如 074A14D8E153）" />
-    <button id="verify-btn">验证</button>
-    <div id="verify-result" class="result-box">🔍 请在上方输入编号以开始验证。</div>
-    <div class="qrcode-placeholder">二维码位置</div>
-  </div>
+    function onTurnstileCompleted() {
+      const mark = document.getElementById("success-checkmark");
+      mark.classList.remove("hidden");
+      mark.classList.add("show");
 
-  <footer>© 2025 LILY_AUTH · 档案系统防伪验证模块</footer>
+      setTimeout(() => {
+        mark.classList.remove("show");
+        mark.classList.add("hidden");
+      }, 1500);
+    }
+  </script>
 
-  <script src="./ui.js"></script>
+  <div class="footer">档案真实性验证系统 · 版权所有 © 2025</div>
+
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
 </body>
 </html>

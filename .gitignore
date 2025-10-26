@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.cache/
+
+wrangler.toml
+.env
+.env.*
+*.log
+
+.DS_Store
+
+*.local
+*.bak
+*.tmp
