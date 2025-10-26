@@ -76,5 +76,7 @@ button:hover {
 }
 
 .cf-turnstile {
-  margin: 20px auto;
+  margin: 12px auto;
+  display: flex;
+  justify-content: center;
 }
