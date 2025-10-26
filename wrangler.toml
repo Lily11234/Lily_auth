@@ -1,12 +1,6 @@
 name = "lily_auth"
-main = "_worker.js"
-compatibility_date = "2024-10-01"
-
-pages_build_output_dir = "public"
+main = "functions/verify.js"
+compatibility_date = "2025-10-25"
 
 [vars]
-ENVIRONMENT = "production"
-
-[[kv_namespaces]]
-binding = "__STATIC_CONTENT"
-id = "dummy"
+TURNSTILE_SECRET = "0x4AAAAAAB8msEdkjmlt0lYu2gQicmjkkOQ"

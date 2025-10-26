@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>档案真实性验证系统 | Lily Auth</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background-color: #f6f6f6;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .page-frame {
+      background: #fff;
+      padding: 40px 60px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 90%;
+      max-width: 600px;
+    }
+    .header h1 {
+      font-size: 26px;
+      margin: 0 0 8px 0;
+    }
+    .subtitle {
+      color: #777;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+    .divider {
+      border-bottom: 1px solid #ddd;
+      margin: 20px 0;
+    }
+    .verify-panel p {
+      color: #333;
+      font-size: 15px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      width: 70%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    button {
+      margin-left: 10px;
+      padding: 10px 24px;
+      font-size: 15px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #555;
+    }
+    .footer {
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+      margin-top: 40px;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-frame">
+    <div class="header">
+      <h1>档案真实性验证系统</h1>
+      <p class="subtitle">Document Authentication System</p>
+      <div class="divider"></div>
+    </div>
+
+    <form id="verifyForm">
+    <input type="text" id="codeInput" placeholder="请输入档案防伪码" required />
+
+    <div class="cf-turnstile"
+        data-sitekey="0x4AAAAAAB8msMU3LQdN-tcy"
+        data-theme="light"
+        data-size="normal"
+        data-callback="onTurnstileCompleted"
+        style="margin: 20px auto;"></div>
+
+    <button type="submit">验证</button>
+  </form>
+
+  <script>
+    function onTurnstileCompleted(token) {
+      console.log("Turnstile token:", token);
+    }
+  </script>
+
+      <div id="result"></div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="footer">
+      档案真实性验证系统 · 版权所有 © 2025
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("verifyForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const code = document.getElementById("codeInput").value.trim();
+      const token = document.querySelector('textarea[name="cf-turnstile-response"]')?.value;
+
+      if (!code) {
+        alert("请输入防伪码");
+        return;
+      }
+      if (!token) {
+        alert("请完成验证码验证");
+        return;
+      }
+
+      window.location.href = `/verify?code=${encodeURIComponent(code)}&token=${encodeURIComponent(token)}`;
+    });
+
+    window.addEventListener("load", () => {
+      const timer = setTimeout(() => {
+        const widget = document.querySelector(".cf-turnstile");
+        const tokenField = document.querySelector('textarea[name="cf-turnstile-response"]');
+        if (!tokenField) {
+          console.warn("⚠️ Turnstile 未加载，尝试重新渲染...");
+          if (window.turnstile && widget) {
+            window.turnstile.render(widget);
+          }
+        }
+      }, 2000);
+    });
+  </script>
+</body>
+</html>
