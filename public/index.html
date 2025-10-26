@@ -1,51 +1,44 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>档案真实性验证系统 | Lily Auth</title>
   <link rel="stylesheet" href="style.css" />
-  <script src="verify.js" defer></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
   <div class="main">
-    <div class="page-frame">
-      <h1 class="header">档案真实性验证系统</h1>
-      <p class="subtitle">Document Authentication System</p>
-      <form id="verifyForm">
-        <input type="text" id="codeInput" placeholder="请输入档案防伪码" required />
-      <div id="turnstile-container" class="fade-in">
-        <div
-          class="cf-turnstile"
-          data-sitekey="0x4AAAAAAB8msEdkjmlt0lYu2gQicmjkkOQ"
-          data-theme="light"
-          data-size="compact"
-          data-callback="onTurnstileCompleted"
-          data-language="zh">
-        </div>
-        <div id="success-checkmark" class="checkmark hidden">✔</div>
+    <h1 class="header">档案真实性验证系统</h1>
+    <p class="subtitle">Document Authentication System</p>
+
+    <form id="verifyForm">
+      <input type="text" id="codeInput" placeholder="请输入档案防伪码" required />
+
+      <div class="cf-turnstile"
+           data-sitekey="0x4AAAAAAAB8msEdkjmlt0lYu2gQicmjkK0Q"
+           data-theme="light"
+           data-size="compact"
+           data-callback="onTurnstileCompleted"
+           data-language="zh">
       </div>
-        <button type="submit">验证</button>
-      </form>
-    </div>
+
+      <div id="success-checkmark" class="checkmark hidden">✔</div>
+      <button type="submit">验证</button>
+    </form>
   </div>
+
   <script>
     console.log("Turnstile script loaded:", typeof turnstile !== "undefined");
-
     function onTurnstileCompleted() {
       const mark = document.getElementById("success-checkmark");
       mark.classList.remove("hidden");
-      mark.classList.add("show");
-
-      setTimeout(() => {
-        mark.classList.remove("show");
-        mark.classList.add("hidden");
-      }, 1500);
+      setTimeout(() => mark.classList.add("hidden"), 1500);
     }
   </script>
 
-  <div class="footer">档案真实性验证系统 · 版权所有 © 2025</div>
-
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <footer class="footer">
+    档案真实性验证系统 · 版权所有 © 2025
+  </footer>
 </body>
 </html>
