@@ -1,7 +1,9 @@
 export async function onRequestPost(context) {
   try {
-    const { request, env } = context;
-    const { code, token } = await request.json();
+    const { request } = context;
+    const body = await request.json();
+    const token = body["cf-turnstile-response"];
+    const secret = "0x4AAAAAAB8msMU3LQdN-tcy";
 
     const formData = new FormData();
     formData.append("secret", env.TURNSTILE_SECRET);
