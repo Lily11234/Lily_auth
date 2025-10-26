@@ -11,15 +11,27 @@ export default {
     }
 
     try {
-      return await getAssetFromKV(
+      const res = await getAssetFromKV(
         { request, waitUntil: ctx.waitUntil.bind(ctx) },
         {
           ASSET_NAMESPACE: env.__STATIC_CONTENT,
           ASSET_MANIFEST: env.__STATIC_CONTENT_MANIFEST,
         }
       );
+      return res;
     } catch (err) {
-      return new Response('Not found', { status: 404 });
+      console.error('Asset fetch error:', err);
+      const index = await getAssetFromKV(
+        {
+          request: new Request(`${url.origin}/index.html`, request),
+          waitUntil: ctx.waitUntil.bind(ctx),
+        },
+        {
+          ASSET_NAMESPACE: env.__STATIC_CONTENT,
+          ASSET_MANIFEST: env.__STATIC_CONTENT_MANIFEST,
+        }
+      );
+      return index;
     }
   },
 };
