@@ -15,19 +15,34 @@
       <p class="subtitle">Document Authentication System</p>
       <form id="verifyForm">
         <input type="text" id="codeInput" placeholder="请输入档案防伪码" required />
+      <div id="turnstile-container" class="fade-in">
         <div
           class="cf-turnstile"
           data-sitekey="0x4AAAAAAA8mSMU3LQh-tcy"
           data-theme="light"
           data-size="compact"
           data-callback="onTurnstileCompleted"
-        ></div>
+          data-language="zh">
+        </div>
+        <div id="success-checkmark" class="checkmark hidden">✔</div>
+      </div>
         <button type="submit">验证</button>
       </form>
     </div>
   </div>
   <script>
     console.log("Turnstile script loaded:", typeof turnstile !== "undefined");
+
+    function onTurnstileCompleted() {
+      const mark = document.getElementById("success-checkmark");
+      mark.classList.remove("hidden");
+      mark.classList.add("show");
+
+      setTimeout(() => {
+        mark.classList.remove("show");
+        mark.classList.add("hidden");
+      }, 1500);
+    }
   </script>
 
   <div class="footer">档案真实性验证系统 · 版权所有 © 2025</div>
