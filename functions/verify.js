@@ -12,9 +12,12 @@ export async function onRequestPost(context) {
     formData.append("response", token);
 
     const verifyResponse = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-      method: "POST",
-      body: formData,
-    });
+    method: "POST",
+    body: formData,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  });
 
     const verifyResult = await verifyResponse.json();
     if (!verifyResult.success) {
