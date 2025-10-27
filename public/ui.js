@@ -10,9 +10,7 @@ document.getElementById("verify-btn").addEventListener("click", async () => {
   resultBox.innerHTML = "⏳ 正在验证，请稍候...";
 
   try {
-    const res = await fetch(
-      `https://lily_auth.lemon101ash.workers.dev?key=${encodeURIComponent(key)}`
-    );
+    const res = await fetch(`/api/verify?key=${encodeURIComponent(key)}`)
     const data = await res.json();
 
     if (data.success) {
