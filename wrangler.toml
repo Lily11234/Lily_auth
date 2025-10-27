@@ -1,6 +1,9 @@
-name = "lily_auth"
-main = "functions/verify.js"
-compatibility_date = "2025-10-25"
+name = "lily-auth"
+compatibility_date = "2025-10-27"
+compatibility_flags = ["nodejs_compat"]
+
+[site]
+bucket = "./public"
 
 [vars]
-TURNSTILE_SECRET = "0x4AAAAAAB8msEdkjmlt0lYu2gQicmjkkOQ"
+TURNSTILE_SECRET = "0x4AAAAAAAB8msEdkmjtleYu2g01cmjkko0Q"
