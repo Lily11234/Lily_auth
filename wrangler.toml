@@ -1,0 +1,17 @@
+name = "lily_auth"
+main = "_worker.js"
+compatibility_date = "2025-10-25"
+
+[[kv_namespaces]]
+binding = "AUTH_DB"
+id = "1a667999b70440fe9895a69acd13108a"
+
+[vars]
+TURNSTILE_SECRET = "0x4AAAAAAB8msEdkjmlt0lYu2gQicmjkkOQ"
+
+[env.production]
+workers_dev = true
+
+[[routes]]
+pattern = "lily-auth.pages.dev/api/*"
+zone_name = "lily-auth.pages.dev"
