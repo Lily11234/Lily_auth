@@ -6,7 +6,12 @@
   <title>档案真实性验证系统 | Lily Auth</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-  <style>
+  <script>
+    function onTurnstileCompleted(token) {
+      console.log("Turnstile token:", token);
+    }
+  </script>
+  <!-- <style>
     body {
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       background-color: #f6f6f6;
@@ -97,7 +102,7 @@
       box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
       z-index: 100;
     }
-  </style>
+  </style> -->
 </head>
 
 <body>
@@ -108,7 +113,7 @@
       <div class="divider"></div>
     </div>
 
-    <form id="verifyForm">
+  <form id="verifyForm">
     <input type="text" id="codeInput" placeholder="请输入档案防伪码" required />
 
     <div class="cf-turnstile"
@@ -120,13 +125,6 @@
 
     <button type="submit">验证</button>
   </form>
-
-  <script>
-    function onTurnstileCompleted(token) {
-      console.log("Turnstile token:", token);
-    }
-  </script>
-
       <div id="result"></div>
     </div>
 
