@@ -1,10 +1,12 @@
-name = "lily-verify"
-main = "verify.js"
+name = "lily-auth"
 compatibility_date = "2024-10-01"
+
+[vars]
+ENVIRONMENT = "production"
+
+[pages]
+build_output_dir = "."
 
 [[kv_namespaces]]
 binding = "AUTH_DB"
-id = "1a667999b70440fe9895a69acd13108a"
-
-[vars]
-AUTH_SECRET = "LILY-2025-KEY"
+id = "1a6679997b7440f4e9895a69acd13108a"
