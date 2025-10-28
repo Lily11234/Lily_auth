@@ -1,6 +1,9 @@
 /*.css
   Cache-Control: no-store
-  
+
+/*
+  Content-Security-Policy: default-src 'self' https://challenges.cloudflare.com; script-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com;
+
 /*
   Cache-Control: no-cache, no-store, must-revalidate
   Pragma: no-cache
