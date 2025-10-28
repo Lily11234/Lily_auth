@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>档案真实性验证系统 | Lily Auth</title>
   <link rel="stylesheet" href="style.css" />
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <script>
     function onTurnstileCompleted(token) {
       console.log("Turnstile token:", token);
@@ -14,29 +13,31 @@
 </head>
 
 <body>
-  <div class="page-frame">
-    <div class="header">
-      <h1>档案真实性验证系统</h1>
-      <p class="subtitle">Document Authentication System</p>
-      <div class="divider"></div>
-    </div>
+  <div class="main">
+    <div class="page-frame">
+      <div class="header">
+        <h1>档案真实性验证系统</h1>
+        <p class="subtitle">Document Authentication System</p>
+        <div class="divider"></div>
+      </div>
 
-  <form id="verifyForm">
-    <input type="text" id="codeInput" placeholder="请输入档案防伪码" required />
+      <form id="verifyForm">
+        <input type="text" id="codeInput" placeholder="请输入档案防伪码" required />
 
-    <div class="cf-turnstile"
-        data-sitekey="0x4AAAAAAB8msEdkjmlt0lYu2gQicmjkkOQ"
-        data-theme="light"
-        data-language="zh-CN">
-    </div>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+        <div class="cf-turnstile"
+            data-sitekey="0x4AAAAAAB8msEdkjmlt0lYu2gQicmjkkOQ"
+            data-theme="light"
+            data-language="zh-CN">
+        </div>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
-    <button type="submit">验证</button>
-  </form>
+        <button type="submit">验证</button>
+      </form>
+
       <div id="result"></div>
     </div>
-
-    <div class="divider"></div>
+  </div>  
+  
     <div class="footer">
       档案真实性验证系统 · 版权所有 © 2025
     </div>
