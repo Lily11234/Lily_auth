@@ -32,11 +32,15 @@
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=renderTurnstile" async defer></script>
   <script>
     function renderTurnstile() {
-      turnstile.render('#turnstile-container', {
-        sitekey: '0x4AAAAAAAB8msMU3LQdN-tcy',
-        theme: 'light',
-        size: 'compact'
-      });
+      if (typeof turnstile !== 'undefined') {
+        turnstile.render('#turnstile-container', {
+          sitekey: '0x4AAAAAAAB8msMU3LQdN-tcy',
+          theme: 'light',
+          size: 'compact',
+        });
+      } else {
+        console.error('Turnstile 未加载');
+      }
     }
   </script>
 </body>
