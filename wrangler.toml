@@ -5,4 +5,4 @@ pages_build_output_dir = "."
 
 [kv_namespaces]
 binding = "AUTH_DB"
-id = "1a667999bb7040fe9859a9acd13108a"
+id = "1a667999b70440fe9895a69acd13108a"
