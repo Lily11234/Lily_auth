@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>档案真实性验证系统 | Lily Auth</title>
   <link rel="stylesheet" href="style.css" />
-  <script>
+  <!-- <script>
     function onTurnstileCompleted(token) {
       console.log("Turnstile token:", token);
     }
-  </script>
+  </script> -->
 </head>
 
 <body>
@@ -30,6 +30,7 @@
             data-size="compact"
             >
         </div>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
         <button type="submit">验证</button>
       </form>
