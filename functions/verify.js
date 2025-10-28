@@ -1,74 +1,42 @@
-export async function onRequestPost(context) {
-  try {
-    const { request, env } = context;
-    const { token } = await request.json();
-
-    const formData = new FormData();
-    formData.append("secret", env.TURNSTILE_SECRET);
-    formData.append("response", token);
-
-    const result = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-      method: "POST",
-      body: formData
-    });
-
-    const outcome = await result.json();
-
-    return new Response(JSON.stringify(outcome), {
-      headers: { "Content-Type": "application/json" }
-    });
-  } catch (err) {
-    return new Response(JSON.stringify({ success: false, error: err.message }), {
-      headers: { "Content-Type": "application/json" },
-      status: 500
-    });
-  }
-}
-
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
-  const timeStr = new Date().toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" });
+  const now = new Date();
+  const timeStr = now.toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" });
 
-  if (!code) {
-    return new Response("缺少防伪码参数", { status: 400 });
-  }
-
-  let data = null;
   let isValid = false;
-  let reason = "";
+  let reason = "未提供检验码。";
+  let data = null;
 
-  try {
-    const lower = await env.AUTH_DB.get(code.toLowerCase());
-    const upper = await env.AUTH_DB.get(code.toUpperCase());
-    const exists = lower || upper;
+  if (code) {
+    let exists = await env.AUTH_DB.get(code);
+    if (!exists) exists = await env.AUTH_DB.get(code.toLowerCase());
+    if (!exists) exists = await env.AUTH_DB.get(code.toUpperCase());
 
     if (exists) {
       try {
         data = JSON.parse(exists);
         isValid = true;
-        reason = `验证通过：${data.filename || "无文件名"}（批次：${data.batch || "无批次号"}）`;
-      } catch (e) {
-        reason = "KV 数据解析失败：" + e.message;
+        reason = `验证通过：${data.filename}（${data.batch}）`;
+      } catch {
+        reason = "KV 数据格式错误，无法解析。";
       }
     } else {
-      reason = "未找到匹配的防伪码记录。";
+      reason = "未检索到此哈希值。";
     }
-  } catch (err) {
-    reason = "KV 读取异常：" + err.message;
   }
 
   const jsonData = {
-    code,
+    code: code || null,
     valid: isValid,
-    reason,
+    result: reason,
     filename: data?.filename || null,
     batch: data?.batch || null,
     timestamp: timeStr,
-    server: "Lily Auth · Pages Function v2.1",
+    server: "Cloudflare Pages Functions · Lily-auth v2",
   };
 
-  const accept = request.headers.get("Accept") || "";
+  const accept = request.headers.get("accept") || "";
   if (accept.includes("application/json")) {
     return new Response(JSON.stringify(jsonData, null, 2), {
       headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -79,53 +47,75 @@ export async function onRequestGet({ request, env }) {
   <!DOCTYPE html>
   <html lang="zh-CN">
   <head>
-    <meta charset="UTF-8" />
-    <title>验证结果 | Lily Auth</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>哈希验证结果 · Lily-auth</title>
     <style>
       body {
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        background: #f6f6f6;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background: #f7f8fa;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        min-height: 100vh;
+        margin: 0;
       }
       .card {
         background: #fff;
-        padding: 40px 60px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 14px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+        padding: 36px 48px;
+        max-width: 540px;
         text-align: center;
-        width: 90%;
-        max-width: 600px;
+        line-height: 1.7;
       }
-      h1 { font-size: 26px; margin-bottom: 15px; }
-      p { color: #444; font-size: 15px; margin: 6px 0; }
-      .ok { color: #008000; font-weight: bold; }
-      .fail { color: #d00; font-weight: bold; }
-      .footer {
-        margin-top: 20px;
+      .emoji {
+        font-size: 2.8rem;
+        margin-bottom: 12px;
+      }
+      h1 {
+        color: ${isValid ? "#0f9d58" : "#d93025"};
+        font-size: 1.8rem;
+        margin-bottom: 22px;
+      }
+      p {
+        font-size: 15px;
+        color: #333;
+        margin: 8px 0;
+      }
+      code {
+        background: #f2f3f5;
+        padding: 3px 6px;
+        border-radius: 5px;
+        font-size: 0.95em;
+        color: #555;
+      }
+      footer {
+        margin-top: 28px;
         font-size: 13px;
         color: #777;
-        border-top: 1px solid #eee;
-        padding-top: 10px;
       }
-      a { color: #333; text-decoration: none; }
-      a:hover { text-decoration: underline; }
+      footer a {
+        color: #0069c2;
+        text-decoration: none;
+      }
+      footer a:hover {
+        text-decoration: underline;
+      }
     </style>
   </head>
   <body>
     <div class="card">
-      <h1>${isValid ? "✅ 验证通过" : "❌ 验证失败"}</h1>
-      <p><b>防伪码：</b>${code}</p>
-      <p><b>验证结果：</b><span class="${isValid ? "ok" : "fail"}">${reason}</span></p>
-      ${data ? `<p><b>文件名：</b>${data.filename || "—"}</p>
-                <p><b>批次号：</b>${data.batch || "—"}</p>` : ""}
-      <p><b>验证时间：</b>${timeStr}</p>
-      <div class="footer">
-        <p>档案真实性验证系统 · Lily Auth © 2025</p>
-        <p><a href="/">返回首页</a></p>
-      </div>
+      <div class="emoji">${isValid ? "✅" : "❌"}</div>
+      <h1>${isValid ? "验证通过" : "验证失败"}</h1>
+      <p><b>校验码：</b><code>${code || "(空)"}</code></p>
+      <p><b>结果说明：</b>${reason}</p>
+      <p><b>校验时间：</b>${timeStr}</p>
+      ${data ? `<p><b>文件名：</b>${data.filename}</p><p><b>批次号：</b>${data.batch}</p>` : ""}
+      <footer>
+        <p>由 <b>Cloudflare Pages</b> 提供验证支持<br>
+        Lily-auth 系统 · <a href="https://auth.lishunyun.net">返回首页</a></p>
+      </footer>
     </div>
   </body>
   </html>
