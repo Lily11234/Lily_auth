@@ -13,57 +13,31 @@
       <div class="header">
         <h1>档案真实性验证系统</h1>
         <p class="subtitle">Document Authentication System</p>
-        <div class="divider"></div>
       </div>
 
       <form id="verifyForm">
         <input type="text" id="codeInput" placeholder="请输入档案防伪码" required />
 
-       <div id="turnstile-container"></div>
+        <div id="turnstile-container"></div>
 
         <button type="submit">验证</button>
       </form>
 
       <div id="result"></div>
     </div>
-  </div>  
-  
-    <div class="footer">
-      档案真实性验证系统 · 版权所有 © 2025
-    </div>
   </div>
 
+  <div class="footer">档案真实性验证系统 · 版权所有 © 2025</div>
+
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=renderTurnstile" async defer></script>
   <script>
-    document.getElementById("verifyForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      const code = document.getElementById("codeInput").value.trim();
-      const token = document.querySelector('textarea[name="cf-turnstile-response"]')?.value;
-
-      if (!code) {
-        alert("请输入防伪码");
-        return;
-      }
-      if (!token) {
-        alert("请完成验证码验证");
-        return;
-      }
-
-      window.location.href = `/verify?code=${encodeURIComponent(code)}&token=${encodeURIComponent(token)}`;
-    });
-
-    window.addEventListener("load", () => {
-      const timer = setTimeout(() => {
-        const widget = document.querySelector(".cf-turnstile");
-        const tokenField = document.querySelector('textarea[name="cf-turnstile-response"]');
-        if (!tokenField) {
-          console.warn("⚠️ Turnstile 未加载，尝试重新渲染...");
-          if (window.turnstile && widget) {
-            window.turnstile.render(widget);
-          }
-        }
-      }, 2000);
-    });
+    function renderTurnstile() {
+      turnstile.render('#turnstile-container', {
+        sitekey: '0x4AAAAAAAB8msMU3LQdN-tcy',
+        theme: 'light',
+        size: 'compact'
+      });
+    }
   </script>
 </body>
 </html>
