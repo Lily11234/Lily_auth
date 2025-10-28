@@ -1,12 +1,8 @@
 name = "lily_auth"
 main = "functions/verify.js"
 compatibility_date = "2025-10-25"
-
 pages_build_output_dir = "."
-
-[vars]
-TURNSTILE_SECRET = "0x4AAAAAAB8msD78-6AT0J03RF3MgdhnkQg"
 
 [kv_namespaces]
 binding = "AUTH_DB"
-id = "1a667999bb70440fe9859a9acd13108a"
+id = "1a667999bb7040fe9859a9acd13108a"

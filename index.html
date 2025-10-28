@@ -5,70 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>档案真实性验证系统 | Lily Auth</title>
   <link rel="stylesheet" href="style.css" />
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
-
 <body>
   <div class="main">
     <div class="page-frame">
       <div class="header">
         <h1>档案真实性验证系统</h1>
         <p class="subtitle">Document Authentication System</p>
-        <div class="divider"></div>
       </div>
 
       <form id="verifyForm">
         <input type="text" id="codeInput" placeholder="请输入档案防伪码" required />
-
-        <div class="cf-turnstile"
-            data-sitekey="0x4AAAAAAB8msMU3LQdN-tcy"
-            data-theme="light"
-            data-size="compact"
-            >
-        </div>
-
         <button type="submit">验证</button>
       </form>
 
       <div id="result"></div>
     </div>
-  </div>  
-  
-    <div class="footer">
-      档案真实性验证系统 · 版权所有 © 2025
-    </div>
+  </div>
+
+  <div class="footer">
+    档案真实性验证系统 · 版权所有 © 2025
   </div>
 
   <script>
-    document.getElementById("verifyForm").addEventListener("submit", (e) => {
+    document.getElementById("verifyForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-
       const code = document.getElementById("codeInput").value.trim();
-      const token = document.querySelector('textarea[name="cf-turnstile-response"]')?.value;
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = "正在验证，请稍候…";
 
-      if (!code) {
-        alert("请输入防伪码");
-        return;
+      try {
+        const res = await fetch("/functions/verify.js", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code }),
+        });
+        const data = await res.json();
+        resultDiv.innerHTML = data.success
+          ? `✅ 验证成功<br>文件：${data.reason}`
+          : `❌ 验证失败<br>原因：${data.reason}`;
+      } catch (err) {
+        resultDiv.innerHTML = `⚠️ 系统错误：${err.message}`;
       }
-      if (!token) {
-        alert("请完成验证码验证");
-        return;
-      }
-
-      window.location.href = `/verify?code=${encodeURIComponent(code)}&token=${encodeURIComponent(token)}`;
-    });
-
-    window.addEventListener("load", () => {
-      const timer = setTimeout(() => {
-        const widget = document.querySelector(".cf-turnstile");
-        const tokenField = document.querySelector('textarea[name="cf-turnstile-response"]');
-        if (!tokenField) {
-          console.warn("⚠️ Turnstile 未加载，尝试重新渲染...");
-          if (window.turnstile && widget) {
-            window.turnstile.render(widget);
-          }
-        }
-      }, 2000);
     });
   </script>
 </body>

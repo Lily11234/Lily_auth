@@ -1,46 +1,30 @@
 export async function onRequestPost(context) {
+  const { request, env } = context;
+
   try {
-    const { request, env } = context;
     const body = await request.json();
-    const { token, code } = body;
-
-    const params = new URLSearchParams();
-    params.append("secret", env.TURNSTILE_SECRET);
-    params.append("response", token);
-
-    const verifyResponse = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-      method: "POST",
-      body: params,
-    });
-
-    const verifyResult = await verifyResponse.json();
-    if (!verifyResult.success) {
-      return new Response(JSON.stringify({ success: false, reason: "人机验证失败" }), {
-        headers: { "Content-Type": "application/json" },
-        status: 400,
-      });
-    }
+    const { code } = body;
 
     const record = await env.AUTH_DB.get(code.toLowerCase());
     if (!record) {
-      return new Response(JSON.stringify({ success: false, reason: "未查到对应档案记录" }), {
-        headers: { "Content-Type": "application/json" },
-        status: 404,
-      });
+      return new Response(
+        JSON.stringify({ success: false, reason: "未找到对应档案记录。" }),
+        { headers: { "Content-Type": "application/json" }, status: 404 }
+      );
     }
 
     const data = JSON.parse(record);
-    return new Response(JSON.stringify({
-      success: true,
-      reason: `验证成功: ${data.filename}（批次: ${data.batch || "无"}）`,
-    }), {
-      headers: { "Content-Type": "application/json" },
-      status: 200,
-    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        reason: `档案编号：${data.filename}（批次：${data.batch || "无"}）`,
+      }),
+      { headers: { "Content-Type": "application/json" }, status: 200 }
+    );
   } catch (err) {
-    return new Response(JSON.stringify({ success: false, reason: `服务器错误: ${err.message}` }), {
-      headers: { "Content-Type": "application/json" },
-      status: 500,
-    });
+    return new Response(
+      JSON.stringify({ success: false, reason: `系统错误：${err.message}` }),
+      { headers: { "Content-Type": "application/json" }, status: 500 }
+    );
   }
 }
