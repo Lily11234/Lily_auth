@@ -35,7 +35,7 @@
       resultDiv.innerHTML = "正在验证，请稍候…";
 
       try {
-        const res = await fetch("/functions/verify.js", {
+        const res = await fetch("/functions/api/verify.js", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code }),
