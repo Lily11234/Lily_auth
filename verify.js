@@ -5,7 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function verify() {
     const code = input.value.trim().toUpperCase();
-    message.textContent = "正在验证，请稍候...";
+    message.classList.add("loading");
+    message.textContent = "🔍 正在验证，请稍候...";
 
     if (!/^[A-Z0-9]{8,20}$/.test(code)) {
       message.textContent = "系统错误：请输入 8–20 位大写英数字组成的防伪码。";
