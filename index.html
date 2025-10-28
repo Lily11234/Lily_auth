@@ -43,5 +43,17 @@
       }
     }
   </script>
+
+  <script>
+setTimeout(() => {
+  const frame = document.querySelector('iframe[src*="turnstile"]');
+  if (!frame) {
+    console.warn("❌ Turnstile 未加载（可能域名缓存未同步或 sitekey 不匹配）");
+  } else {
+    console.log("✅ Turnstile 已成功加载");
+  }
+}, 2500);
+</script>
+
 </body>
 </html>
